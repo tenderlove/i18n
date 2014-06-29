@@ -6,10 +6,10 @@ class I18nBackendExceptionsTest < I18n::TestCase
   end
 
   test "throw message: MissingTranslation message from #translate includes the given scope and full key" do
-    exception = catch(:exception) do
+    ex = assert_raises(I18n::ThrowException) do
       I18n.t(:'baz.missing', :scope => :'foo.bar', :throw => true)
     end
-    assert_equal "translation missing: en.foo.bar.baz.missing", exception.message
+    assert_equal "translation missing: en.foo.bar.baz.missing", ex.ex.message
   end
 
   test "exceptions: MissingTranslationData message from #translate includes the given scope and full key" do

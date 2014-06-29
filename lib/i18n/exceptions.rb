@@ -49,6 +49,13 @@ module I18n
     end
   end
 
+  class ThrowException < StandardError
+    attr_reader :ex
+    def initialize ex
+      @ex = ex
+    end
+  end
+
   class MissingTranslation
     module Base
       attr_reader :locale, :key, :options

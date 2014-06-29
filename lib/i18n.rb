@@ -154,7 +154,15 @@ module I18n
         if key.is_a?(Array)
           key.map { |k| backend.translate(locale, k, options) }
         else
-          backend.translate(locale, key, options)
+          begin
+            backend.translate(locale, key, options)
+          rescue ThrowException => ex
+            if handling == :throw
+              raise ex
+            else
+              return handle_exception(handling, ex.ex, locale, key, options)
+            end
+          end
         end
       end
       result.is_a?(MissingTranslation) ? handle_exception(handling, result, locale, key, options) : result

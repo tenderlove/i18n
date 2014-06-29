@@ -34,7 +34,8 @@ module I18n
             default(locale, key, default, options) : resolve(locale, key, entry, options)
         end
 
-        throw(:exception, I18n::MissingTranslation.new(locale, key, options)) if entry.nil?
+        #throw(:exception, I18n::MissingTranslation.new(locale, key, options)) if entry.nil?
+        raise(ThrowException.new(I18n::MissingTranslation.new(locale, key, options))) if entry.nil?
         entry = entry.dup if entry.is_a?(String)
 
         entry = pluralize(locale, entry, count) if count
@@ -116,7 +117,11 @@ module I18n
           result = catch(:exception) do
             case subject
             when Symbol
+              begin
               I18n.translate(subject, options.merge(:locale => locale, :throw => true))
+              rescue ThrowException => ex
+                ex.ex
+              end
             when Proc
               date_or_time = options.delete(:object) || object
               resolve(locale, object, subject.call(date_or_time, options))

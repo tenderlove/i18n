@@ -33,9 +33,9 @@ class I18nOverrideTest < I18n::TestCase
   end
 
   test "make sure modules can overwrite I18n signature" do
-    exception = catch(:exception) do
+    exception = assert_raises(I18n::ThrowException) do
       @I18n.t('Hello', 'Welcome message on home page', :tokenize => true, :throw => true)
-    end
+    end.ex
     assert exception.message
     @I18n.extend OverrideSignature
     assert_equal 'HelloWelcome message on home page', @I18n.translate('Hello', 'Welcome message on home page', :tokenize => true) # tr8n example

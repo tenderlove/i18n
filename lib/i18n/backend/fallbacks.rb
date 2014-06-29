@@ -45,7 +45,7 @@ module I18n
               result = super(fallback, key, options)
               return result unless result.nil?
             end
-          rescue I18n::InvalidLocale
+          rescue I18n::InvalidLocale, ThrowException
             # we do nothing when the locale is invalid, as this is a fallback anyways.
           end
         end

@@ -43,11 +43,14 @@ module I18n
           backends.each do |backend|
             catch(:exception) do
               options = default_options if backend == backends.last
-              translation = backend.translate(locale, key, options)
-              if namespace_lookup?(translation, options)
-                namespace = translation.merge(namespace || {})
-              elsif !translation.nil?
-                return translation
+              begin
+                translation = backend.translate(locale, key, options)
+                if namespace_lookup?(translation, options)
+                  namespace = translation.merge(namespace || {})
+                elsif !translation.nil?
+                  return translation
+                end
+              rescue ThrowException
               end
             end
           end
