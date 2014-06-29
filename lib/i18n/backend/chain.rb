@@ -56,7 +56,7 @@ module I18n
           end
 
           return namespace if namespace
-          throw(:exception, I18n::MissingTranslation.new(locale, key, options))
+          raise I18n::ThrowException.new(I18n::MissingTranslation.new(locale, key, options))
         end
 
         def exists?(locale, key)
