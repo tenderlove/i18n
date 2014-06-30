@@ -77,8 +77,13 @@ module I18n
 
         def _fetch(cache_key, &block)
           result = I18n.cache_store.read(cache_key) and return result
-          result = yield
-          I18n.cache_store.write(cache_key, result) unless result.is_a?(Proc)
+          begin
+            result = yield
+            I18n.cache_store.write(cache_key, result) unless result.is_a?(Proc)
+          rescue ThrowException => ex
+            I18n.cache_store.write(cache_key, ex.ex)
+            raise
+          end
           result
         end
 
