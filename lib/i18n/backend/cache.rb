@@ -70,7 +70,7 @@ module I18n
 
         def fetch(cache_key, &block)
           result = _fetch(cache_key, &block)
-          raise ThrowException.new(result)
+          raise ThrowException.new(result) if result.is_a?(MissingTranslation)
           result = result.dup if result.frozen? rescue result
           result
         end
