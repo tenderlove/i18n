@@ -150,22 +150,19 @@ module I18n
       enforce_available_locales!(locale)
       raise I18n::ArgumentError if key.is_a?(String) && key.empty?
 
-      result = catch(:exception) do
-        if key.is_a?(Array)
-          key.map { |k| backend.translate(locale, k, options) }
-        else
-          begin
-            backend.translate(locale, key, options)
-          rescue ThrowException => ex
-            if handling == :throw
-              raise ex
-            else
-              return handle_exception(handling, ex.ex, locale, key, options)
-            end
+      if key.is_a?(Array)
+        key.map { |k| backend.translate(locale, k, options) }
+      else
+        begin
+          backend.translate(locale, key, options)
+        rescue ThrowException => ex
+          if handling == :throw
+            raise ex
+          else
+            return handle_exception(handling, ex.ex, locale, key, options)
           end
         end
       end
-      result.is_a?(MissingTranslation) ? handle_exception(handling, result, locale, key, options) : result
     end
     alias :t :translate
 

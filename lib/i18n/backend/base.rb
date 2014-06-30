@@ -34,7 +34,6 @@ module I18n
             default(locale, key, default, options) : resolve(locale, key, entry, options)
         end
 
-        #throw(:exception, I18n::MissingTranslation.new(locale, key, options)) if entry.nil?
         raise(ThrowException.new(I18n::MissingTranslation.new(locale, key, options))) if entry.nil?
         entry = entry.dup if entry.is_a?(String)
 
@@ -114,22 +113,19 @@ module I18n
         # subjects will be returned directly.
         def resolve(locale, object, subject, options = {})
           return subject if options[:resolve] == false
-          result = catch(:exception) do
-            case subject
-            when Symbol
-              begin
-              I18n.translate(subject, options.merge(:locale => locale, :throw => true))
-              rescue ThrowException => ex
-                ex.ex
-              end
-            when Proc
-              date_or_time = options.delete(:object) || object
-              resolve(locale, object, subject.call(date_or_time, options))
-            else
-              subject
+          case subject
+          when Symbol
+            begin
+            I18n.translate(subject, options.merge(:locale => locale, :throw => true))
+            rescue ThrowException => ex
+              return nil
             end
+          when Proc
+            date_or_time = options.delete(:object) || object
+            resolve(locale, object, subject.call(date_or_time, options))
+          else
+            subject
           end
-          result unless result.is_a?(MissingTranslation)
         end
 
         # Picks a translation from a pluralized mnemonic subkey according to English
